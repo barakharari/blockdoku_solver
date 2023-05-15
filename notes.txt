@@ -1,0 +1,55 @@
+Key Idea: Treat the state as a single number
+state = 10011001_011010100_… where the bits represent the activation of each square from bottom left to top right. The activation of the square in row i column j will be: state & ((i*SIZE_OF_ROW) + j) != 0
+
+Methods: (Zero-indexing assumed here)
+
+// Get the activation of a single square
+activation(state, row_num, column_num) -> return state & (1 << (row_num*SIZE_OF_ROW) + column_num)
+
+// Check whether a column is complete
+check_column(state, column_num) ->  return state & (100000000100000000… >> column_num)
+
+// Check whether a row is complete
+check_row(state, row_num) -> return state & (111111111 << SIZE_OF_ROW*row_num)
+
+// Check whether a square is complete
+// Here we assume square are number 1-9 starting from bottom left up to top right
+check_square(state, square) -> return state & ((111000000111000000111…) … figure out later
+
+// Clear a column
+// We just negate the check operation so that everything stays the same other than our column
+clear_column(state, column_num) -> return state & ^(100000000100000000… >> column_num)
+
+// Clear a row. Same idea as above
+check_row(state, row_num) -> return state & ^(111111111 << SIZE_OF_ROW*row_num)
+
+// Clear a square. Same idea as above
+clear_square(state, square) -> return state & ((111000000000111000000000111…) … figure out later
+
+// Access all of the possible pieces, try them all on the new board, sum up the amount you can fit on this board? Maybe find a different way to score the board?
+score_board(state) -> ...
+
+// Top level operation. Iterate through all permutations of the board with the given pieces, score the resultant boards and keep track of the max. Use backtracking to get the optimal board
+calculate_next_moves(state, pieces) -> ...
+
+// Pieces will be encoded as number as well, here it will be a shifted version of the piece depending on our iteration of the checking loop.
+// So we iterate over the position of the piece, need to do some shifting when we reach a boundary
+// The squares outside of the piece will zero out, the squares inside the piece should also zero out (in the board state they should be 0)
+attempt_place_piece(state, piece) -> ... state = piece & state == 0, return -1 if we can't place
+
+
+Have to think of state as follows (if we are using bitmap):
+
+000000000
+000000000
+000000000
+000000000
+000000000
+000000000
+000000000
+000000000
+000000000
+
+MSB will be bottom left, LSB will be top right.
+
+Need to fix all of the aux functions
